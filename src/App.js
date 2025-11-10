@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
@@ -7,15 +7,12 @@ function App() {
   const [studentData, setStudentData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [popupImage, setPopupImage] = useState(null);
 
-  // Replace with your Render URL if different
   const BACKEND_URL = "https://student-image-finder.onrender.com";
 
   const fetchStudent = async () => {
-    if (!scholarId.trim()) {
-      setError("Please enter Scholar ID");
-      return;
-    }
+    if (!scholarId.trim()) return setError("Please enter a Scholar ID or Name");
     setLoading(true);
     setError("");
     setStudentData(null);
@@ -30,112 +27,131 @@ function App() {
     }
   };
 
-  // map image fields to friendly labels and associated name fields
+  useEffect(() => {
+    if (loading) {
+      const messages = [
+        "Fetching student details...",
+        "Verifying scholar ID...",
+        "Checking image links...",
+        "Almost done...",
+      ];
+      let index = 0;
+      const textElement = document.getElementById("loading-text");
+      if (textElement) textElement.textContent = messages[index];
+      const interval = setInterval(() => {
+        index = (index + 1) % messages.length;
+        if (textElement) textElement.textContent = messages[index];
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
+
   const imageMap = [
-    { label: "Student", imgField: "Student's Photograph", nameField: "Student Name" },
     { label: "Father", imgField: "Father's Photograph", nameField: "Father Name" },
     { label: "Mother", imgField: "Mother's Photograph", nameField: "Mother Name" },
-    { label: "Guardian", imgField: "Guardian's Photo", nameField: "Guardian's Name" },
     { label: "Grandfather", imgField: "Grandfather's Photograph", nameField: "Grandfather's Name" },
     { label: "Grandmother", imgField: "Grandmother's Photograph", nameField: "Grandmother's Name" },
     { label: "Sibling 1", imgField: "Sibling-1 Photograph (Real brother/sister)", nameField: "Sibling-1 Name" },
     { label: "Sibling 2", imgField: "Sibling-2 Photograph (Real brother/sister)", nameField: "Sibling-2 Name" },
-    { label: "Sibling 1 Aadhar", imgField: "Aadhar Card Of Sibling 1", nameField: null },
-    { label: "Sibling 2 Aadhar", imgField: "Aadhar Card Of Sibling 2", nameField: null }
   ];
 
   return (
     <div className="app">
+      {/* HEADER */}
       <header className="header">
-        <div className="header-inner">
+        <div className="header-content">
           <div className="brand">
-          <div className="brand-logo">
-  <img src="/logo.png" alt="Okie Dokie Logo" className="logo-img" />
-</div>
-
-            <div>
-              <div className="brand-title">Okie Dokie</div>
-              <div className="brand-sub">Student Info</div>
-            </div>
+            <img
+              src="https://okiedokie-erp-images.s3.ap-south-1.amazonaws.com/Okie%20Dokie/2025/02/sourceURL/611ed1b9032568edd4f3-Okie%20Dokie%20App%20icon%20%282%29.png"
+              alt="Okie Dokie Logo"
+              className="brand-logo"
+            />
+            <h1 className="brand-title">Okie Dokie — Student Info</h1>
           </div>
           <div className="created-by">Created by Okie Dokie</div>
         </div>
       </header>
 
-      <main className="container">
-    
+      {/* SEARCH BAR */}
+      <section className="search-area">
+        <input
+          className="search-input"
+          placeholder="Enter Scholar ID (e.g. 2172)"
+          value={scholarId}
+          onChange={(e) => setScholarId(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && fetchStudent()}
+        />
+        <button className="search-btn" onClick={fetchStudent} disabled={loading}>
+          {loading ? "Searching..." : "Search"}
+        </button>
+      </section>
 
+      {/* LOADER */}
+      {loading && (
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p className="loading-text" id="loading-text"></p>
+        </div>
+      )}
 
-        <section className="search-area">
-          <input
-            className="search-input"
-            placeholder="Enter Scholar ID (e.g. 2172/2016)"
-            value={scholarId}
-            onChange={(e) => setScholarId(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") fetchStudent(); }}
-          />
-          <button className="search-btn" onClick={fetchStudent} disabled={loading}>
-            {loading ? "Searching..." : "Search"}
-          </button>
-        </section>
+      {/* ERROR */}
+      {error && <div className="msg error">{error}</div>}
 
-        {error && <div className="msg error">{error}</div>}
+      {/* MAIN UI */}
+      {studentData && !loading && (
+        <div className="main-layout">
+          {/* STUDENT CARD */}
+          <div className="student-card">
+            <img
+              src={studentData["Student's Photograph"]}
+              alt="Student"
+              className="student-photo"
+              onClick={() => setPopupImage(studentData["Student's Photograph"])}
+            />
+            <h2>{studentData["Student Name"]}</h2>
+            <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
+            <p><strong>Stream:</strong> {studentData["Stream"]}</p>
+            <p><strong>Course:</strong> {studentData["Course"]}</p>
+          </div>
 
-        {studentData && (
-          <>
-            {/* Top: Large student image + main details */}
-            <section className="top-card">
-              <div className="top-left">
-                {studentData["Student's Photograph"] ? (
-                  <img className="main-photo" src={studentData["Student's Photograph"]} alt="Student" />
-                ) : (
-                  <div className="main-photo placeholder">No Photo</div>
-                )}
-              </div>
-              <div className="top-right">
-                <h2 className="student-name">{studentData["Student Name"] || "—"}</h2>
-                <div className="meta-grid">
-                  <div><span className="meta-label">Scholar ID</span><div className="meta-value">{studentData["Scholar ID"] || "—"}</div></div>
-                  <div><span className="meta-label">Course</span><div className="meta-value">{studentData["Course"] || "—"}</div></div>
-                  <div><span className="meta-label">Stream</span><div className="meta-value">{studentData["Stream"] || "—"}</div></div>
-                  <div><span className="meta-label">Section</span><div className="meta-value">{studentData["Section"] || "—"}</div></div>
-                  <div><span className="meta-label">Father</span><div className="meta-value">{studentData["Father Name"] || "—"}</div></div>
-                  <div><span className="meta-label">Mother</span><div className="meta-value">{studentData["Mother Name"] || "—"}</div></div>
-                </div>
-              </div>
-            </section>
+          {/* PHOTOS GRID */}
+          <div className="photos-container">
+            <h3>Photos & Documents</h3>
+            <div className="photos-grid">
+              {imageMap.map((item) => {
+                const url = studentData[item.imgField];
+                const personName = item.nameField ? studentData[item.nameField] : null;
+                if (!url && !personName) return null;
+                return (
+                  <div className="photo-card" key={item.label}>
+                    {url ? (
+                      <img
+                        src={url}
+                        alt={item.label}
+                        className="photo"
+                        onClick={() => setPopupImage(url)}
+                      />
+                    ) : (
+                      <div className="photo placeholder">No Image</div>
+                    )}
+                    <div className="photo-label">{item.label}</div>
+                    {personName && <div className="photo-name">{personName}</div>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
-            {/* Other photos in cards */}
-            <section className="cards-section">
-              <h3 className="cards-title">Photos & Documents</h3>
-              <div className="cards-grid">
-                {imageMap.map((item) => {
-                  const url = studentData[item.imgField];
-                  const personName = item.nameField ? studentData[item.nameField] : null;
-                  // show card if either image or name/field exists
-                  if (!url && !personName) return null;
-                  return (
-                    <div className="card" key={item.imgField || item.label}>
-                      <div className="card-label">{item.label}</div>
-                      {url ? (
-                        <img className="card-img" src={url} alt={item.label} />
-                      ) : (
-                        <div className="card-img placeholder">No Image</div>
-                      )}
-                      {personName && <div className="card-name">{personName}</div>}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-        </>
-        )}
-        
-      </main>
+      {/* POPUP IMAGE */}
+      {popupImage && (
+        <div className="popup-overlay" onClick={() => setPopupImage(null)}>
+          <img src={popupImage} alt="Popup" className="popup-image" />
+        </div>
+      )}
 
-      <footer className="footer">
-        <div>Okie Dokie • Student Image Finder</div>
-      </footer>
+      <footer className="footer">Okie Dokie • Student Image Finder</footer>
     </div>
   );
 }
