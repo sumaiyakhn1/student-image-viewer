@@ -49,7 +49,10 @@ function App() {
       <header className="header">
         <div className="header-inner">
           <div className="brand">
-            <div className="brand-logo">🟠</div>
+          <div className="brand-logo">
+  <img src="/logo.png" alt="Okie Dokie Logo" className="logo-img" />
+</div>
+
             <div>
               <div className="brand-title">Okie Dokie</div>
               <div className="brand-sub">Student Info</div>
