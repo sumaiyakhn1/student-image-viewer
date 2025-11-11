@@ -101,16 +101,26 @@ function App() {
         <div className="main-layout">
           {/* STUDENT CARD */}
           <div className="student-card">
-            <img
-              src={studentData["Student's Photograph"]}
-              alt="Student"
-              className="student-photo"
-            />
-            <h2>{studentData["Student Name"]}</h2>
-            <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
-            <p><strong>Stream:</strong> {studentData["Stream"]}</p>
-            <p><strong>Course:</strong> {studentData["Course"]}</p>
-          </div>
+  <div className="student-photo-wrapper">
+    <img
+      src={studentData["Student's Photograph"]}
+      alt="Student"
+      className="student-photo"
+    />
+    <img
+      src={studentData["Student's Photograph"]}
+      alt="Student Enlarged"
+      className="student-photo-popup"
+      aria-hidden="true"
+    />
+  </div>
+
+  <h2>{studentData["Student Name"]}</h2>
+  <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
+  <p><strong>Stream:</strong> {studentData["Stream"]}</p>
+  <p><strong>Course:</strong> {studentData["Course"]}</p>
+</div>
+
 
           {/* PHOTOS GRID */}
           <div className="photos-container">

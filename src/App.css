@@ -99,6 +99,12 @@ body {
   align-self: flex-start;
 }
 
+/* === Student Photo Popup === */
+.student-photo-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .student-photo {
   width: 150px;
   height: 150px;
@@ -106,12 +112,35 @@ body {
   border-radius: 12px;
   margin-bottom: 1rem;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
 
-.student-photo:hover {
-  transform: scale(1.06);
-  box-shadow: 0 8px 20px rgba(255, 123, 0, 0.25);
+.student-photo-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  z-index: 10;
+  width: 260px;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  background: #fff;
+}
+
+/* Hover: show enlarged student photo */
+.student-photo-wrapper:hover .student-photo-popup {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.student-photo-wrapper:hover .student-photo {
+  opacity: 0.3;
+  transform: scale(0.9);
 }
 
 .student-card h2 {
@@ -146,7 +175,7 @@ body {
   text-align: center;
   box-shadow: var(--shadow);
   transition: all 0.3s ease;
-  position: relative; /* for the popup */
+  position: relative;
   overflow: visible;
 }
 
@@ -155,7 +184,7 @@ body {
   box-shadow: 0 6px 20px rgba(255, 136, 0, 0.25);
 }
 
-/* The regular small photo inside the card */
+/* Small photo */
 .photo {
   width: 100%;
   height: 180px;
@@ -176,9 +205,7 @@ body {
   font-size: 0.9rem;
 }
 
-/* POPUP ON HOVER
-   We place a duplicate image absolutely centered inside the card and reveal it on hover.
-*/
+/* Hover popup for family photos */
 .photo-popup {
   position: absolute;
   top: 50%;
@@ -196,24 +223,23 @@ body {
   background: #fff;
 }
 
-/* reveal popup when hovering the card */
 .photo-card:hover .photo-popup {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* slightly dim & shrink the small photo while popup is visible */
 .photo-card:hover .photo {
   opacity: 0.18;
   transform: scale(0.96);
 }
 
-/* POPUP responsive tweaks */
+/* Responsive tweaks */
 @media (max-width: 900px) {
   .photos-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .photo-popup {
+  .photo-popup,
+  .student-photo-popup {
     width: 220px;
     height: 220px;
   }
@@ -231,7 +257,8 @@ body {
     flex-direction: column;
     padding: 0 1rem;
   }
-  .photo-popup {
+  .photo-popup,
+  .student-photo-popup {
     width: 180px;
     height: 180px;
   }
