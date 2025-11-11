@@ -106,12 +106,14 @@ function App() {
       src={studentData["Student's Photograph"]}
       alt="Student"
       className="student-photo"
+       loading="lazy"
     />
     <img
       src={studentData["Student's Photograph"]}
       alt="Student Enlarged"
       className="student-photo-popup"
       aria-hidden="true"
+       loading="lazy"
     />
   </div>
 
@@ -138,6 +140,7 @@ function App() {
                           src={url}
                           alt={item.label}
                           className="photo"
+                           loading="lazy"
                         />
                         {/* Hover popup duplicate image */}
                         <img
@@ -145,6 +148,7 @@ function App() {
                           alt={`${item.label} enlarged`}
                           className="photo-popup"
                           aria-hidden="true"
+                           loading="lazy"
                         />
                       </>
                     ) : (
