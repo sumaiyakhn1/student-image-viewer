@@ -119,7 +119,7 @@ function App() {
 
   <h2>{studentData["Student Name"]}</h2>
   <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
-  <p><strong>Stream:</strong> {studentData["Stream"]}</p>
+  <p><strong>Section:</strong> {studentData["Stream"]}</p>
   <p><strong>Course:</strong> {studentData["Course"]}</p>
 </div>
 
