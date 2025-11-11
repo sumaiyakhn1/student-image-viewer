@@ -7,6 +7,7 @@ function App() {
   const [studentData, setStudentData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [activeImage, setActiveImage] = useState(null);
 
   const BACKEND_URL = "https://student-image-finder.onrender.com";
 
@@ -17,7 +18,9 @@ function App() {
     setStudentData(null);
 
     try {
-      const res = await axios.get(`${BACKEND_URL}/student/${encodeURIComponent(scholarId)}`);
+      const res = await axios.get(
+        `${BACKEND_URL}/student/${encodeURIComponent(scholarId)}`
+      );
       setStudentData(res.data);
     } catch (err) {
       setError(err.response?.data?.detail || "Student not found or server error");
@@ -71,7 +74,7 @@ function App() {
         </div>
       </header>
 
-      {/* SEARCH BAR */}
+      {/* SEARCH */}
       <section className="search-area">
         <input
           className="search-input"
@@ -96,35 +99,24 @@ function App() {
       {/* ERROR */}
       {error && <div className="msg error">{error}</div>}
 
-      {/* MAIN UI */}
+      {/* MAIN */}
       {studentData && !loading && (
         <div className="main-layout">
           {/* STUDENT CARD */}
           <div className="student-card">
-  <div className="student-photo-wrapper">
-    <img
-      src={studentData["Student's Photograph"]}
-      alt="Student"
-      className="student-photo"
-       loading="lazy"
-    />
-    <img
-      src={studentData["Student's Photograph"]}
-      alt="Student Enlarged"
-      className="student-photo-popup"
-      aria-hidden="true"
-       loading="lazy"
-    />
-  </div>
+            <img
+              src={studentData["Student's Photograph"]}
+              alt="Student"
+              className="student-photo"
+              onMouseEnter={() => setActiveImage(studentData["Student's Photograph"])}
+            />
+            <h2>{studentData["Student Name"]}</h2>
+            <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
+            <p><strong>Section:</strong> {studentData["Stream"]}</p>
+            <p><strong>Course:</strong> {studentData["Course"]}</p>
+          </div>
 
-  <h2>{studentData["Student Name"]}</h2>
-  <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
-  <p><strong>Section:</strong> {studentData["Stream"]}</p>
-  <p><strong>Course:</strong> {studentData["Course"]}</p>
-</div>
-
-
-          {/* PHOTOS GRID */}
+          {/* FAMILY PHOTOS */}
           <div className="photos-container">
             <h3>Photos & Documents</h3>
             <div className="photos-grid">
@@ -135,22 +127,12 @@ function App() {
                 return (
                   <div className="photo-card" key={item.label}>
                     {url ? (
-                      <>
-                        <img
-                          src={url}
-                          alt={item.label}
-                          className="photo"
-                           loading="lazy"
-                        />
-                        {/* Hover popup duplicate image */}
-                        <img
-                          src={url}
-                          alt={`${item.label} enlarged`}
-                          className="photo-popup"
-                          aria-hidden="true"
-                           loading="lazy"
-                        />
-                      </>
+                      <img
+                        src={url}
+                        alt={item.label}
+                        className="photo"
+                        onMouseEnter={() => setActiveImage(url)}
+                      />
                     ) : (
                       <div className="photo placeholder">No Image</div>
                     )}
@@ -160,6 +142,16 @@ function App() {
                 );
               })}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* POPUP */}
+      {activeImage && (
+        <div className="popup-overlay" onClick={(e) => e.target.classList.contains("popup-overlay") && setActiveImage(null)}>
+          <div className="popup-content">
+            <button className="close-btn" onClick={() => setActiveImage(null)}>✕</button>
+            <img src={activeImage} alt="enlarged" className="popup-image" />
           </div>
         </div>
       )}
