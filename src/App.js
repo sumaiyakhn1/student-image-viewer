@@ -7,7 +7,6 @@ function App() {
   const [studentData, setStudentData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [popupImage, setPopupImage] = useState(null);
 
   const BACKEND_URL = "https://student-image-finder.onrender.com";
 
@@ -106,7 +105,6 @@ function App() {
               src={studentData["Student's Photograph"]}
               alt="Student"
               className="student-photo"
-              onClick={() => setPopupImage(studentData["Student's Photograph"])}
             />
             <h2>{studentData["Student Name"]}</h2>
             <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
@@ -125,12 +123,20 @@ function App() {
                 return (
                   <div className="photo-card" key={item.label}>
                     {url ? (
-                      <img
-                        src={url}
-                        alt={item.label}
-                        className="photo"
-                        onClick={() => setPopupImage(url)}
-                      />
+                      <>
+                        <img
+                          src={url}
+                          alt={item.label}
+                          className="photo"
+                        />
+                        {/* Hover popup duplicate image */}
+                        <img
+                          src={url}
+                          alt={`${item.label} enlarged`}
+                          className="photo-popup"
+                          aria-hidden="true"
+                        />
+                      </>
                     ) : (
                       <div className="photo placeholder">No Image</div>
                     )}
@@ -141,13 +147,6 @@ function App() {
               })}
             </div>
           </div>
-        </div>
-      )}
-
-      {/* POPUP IMAGE */}
-      {popupImage && (
-        <div className="popup-overlay" onClick={() => setPopupImage(null)}>
-          <img src={popupImage} alt="Popup" className="popup-image" />
         </div>
       )}
 
