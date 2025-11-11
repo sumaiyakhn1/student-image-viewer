@@ -116,20 +116,22 @@ body {
 }
 
 .student-photo-popup {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0.85);
   opacity: 0;
   pointer-events: none;
   transition: transform 0.25s ease, opacity 0.25s ease;
-  z-index: 10;
-  width: 340px;
-  height: 340px;
-  object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  width: 400px;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   background: #fff;
+  padding: 10px;
 }
 
 /* Hover: show enlarged student photo */
@@ -143,9 +145,13 @@ body {
   transform: scale(0.9);
 }
 
-.student-card h2 {
-  margin-bottom: 0.5rem;
-  font-weight: 700;
+/* Optional background overlay on hover */
+.student-photo-wrapper:hover::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9998;
 }
 
 /* PHOTOS SECTION */
@@ -207,27 +213,40 @@ body {
 
 /* Hover popup for family photos */
 .photo-popup {
-  position: absolute;
+  position: fixed; /* changed from absolute */
   top: 50%;
   left: 50%;
-  width: 300px;
-  height: 300px;
+  width: 400px;
+  height: auto;
+  max-height: 80vh;
   transform: translate(-50%, -50%) scale(0.85);
   opacity: 0;
   pointer-events: none;
   transition: transform 0.28s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
-  z-index: 20;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  object-fit: cover;
+  z-index: 9999;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
   background: #fff;
+  padding: 10px;
 }
 
+/* reveal popup */
 .photo-card:hover .photo-popup {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
+/* background overlay for popup */
+.photo-card:hover::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9998;
+}
+
+/* slightly dim & shrink the small photo while popup visible */
 .photo-card:hover .photo {
   opacity: 0.18;
   transform: scale(0.96);
@@ -240,8 +259,7 @@ body {
   }
   .photo-popup,
   .student-photo-popup {
-    width: 220px;
-    height: 220px;
+    width: 300px;
   }
 }
 
@@ -259,8 +277,7 @@ body {
   }
   .photo-popup,
   .student-photo-popup {
-    width: 180px;
-    height: 180px;
+    width: 240px;
   }
 }
 
