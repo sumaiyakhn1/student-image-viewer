@@ -60,6 +60,9 @@ function App() {
     }
   }, [loading]);
 
+  // ========================
+  // IMAGE MAPPING (with Aadhar)
+  // ========================
   const imageMap = [
     {
       label: "Father",
@@ -87,8 +90,18 @@ function App() {
       nameField: "Sibling-1 Name",
     },
     {
+      label: "Sibling 1 — Aadhar Card",
+      imgField: "Aadhar Card Of Sibling 1",
+      nameField: "Sibling-1 Name",
+    },
+    {
       label: "Sibling 2",
       imgField: "Sibling-2 Photograph (Real brother/sister)",
+      nameField: "Sibling-2 Name",
+    },
+    {
+      label: "Sibling 2 — Aadhar Card",
+      imgField: "Aadhar Card Of Sibling 2",
       nameField: "Sibling-2 Name",
     },
   ];
@@ -171,7 +184,12 @@ function App() {
                   : null;
                 if (!url && !personName) return null;
                 return (
-                  <div className="photo-card" key={item.label}>
+                  <div
+                    className={`photo-card ${
+                      item.label.includes("Aadhar") ? "aadhar" : ""
+                    }`}
+                    key={item.label}
+                  >
                     {url ? (
                       <img
                         src={url}
