@@ -23,12 +23,24 @@ function App() {
       );
       setStudentData(res.data);
     } catch (err) {
-      setError(err.response?.data?.detail || "Student not found or server error");
+      setError(
+        err.response?.data?.detail || "Student not found or server error"
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // Close popup on ESC key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setActiveImage(null);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
+
+  // Animated loading text
   useEffect(() => {
     if (loading) {
       const messages = [
@@ -49,12 +61,36 @@ function App() {
   }, [loading]);
 
   const imageMap = [
-    { label: "Father", imgField: "Father's Photograph", nameField: "Father Name" },
-    { label: "Mother", imgField: "Mother's Photograph", nameField: "Mother Name" },
-    { label: "Grandfather", imgField: "Grandfather's Photograph", nameField: "Grandfather's Name" },
-    { label: "Grandmother", imgField: "Grandmother's Photograph", nameField: "Grandmother's Name" },
-    { label: "Sibling 1", imgField: "Sibling-1 Photograph (Real brother/sister)", nameField: "Sibling-1 Name" },
-    { label: "Sibling 2", imgField: "Sibling-2 Photograph (Real brother/sister)", nameField: "Sibling-2 Name" },
+    {
+      label: "Father",
+      imgField: "Father's Photograph",
+      nameField: "Father Name",
+    },
+    {
+      label: "Mother",
+      imgField: "Mother's Photograph",
+      nameField: "Mother Name",
+    },
+    {
+      label: "Grandfather",
+      imgField: "Grandfather's Photograph",
+      nameField: "Grandfather's Name",
+    },
+    {
+      label: "Grandmother",
+      imgField: "Grandmother's Photograph",
+      nameField: "Grandmother's Name",
+    },
+    {
+      label: "Sibling 1",
+      imgField: "Sibling-1 Photograph (Real brother/sister)",
+      nameField: "Sibling-1 Name",
+    },
+    {
+      label: "Sibling 2",
+      imgField: "Sibling-2 Photograph (Real brother/sister)",
+      nameField: "Sibling-2 Name",
+    },
   ];
 
   return (
@@ -108,12 +144,20 @@ function App() {
               src={studentData["Student's Photograph"]}
               alt="Student"
               className="student-photo"
-              onMouseEnter={() => setActiveImage(studentData["Student's Photograph"])}
+              onClick={() =>
+                setActiveImage(studentData["Student's Photograph"])
+              }
             />
             <h2>{studentData["Student Name"]}</h2>
-            <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
-            <p><strong>Section:</strong> {studentData["Section"]}</p>
-            <p><strong>Course:</strong> {studentData["Course"]}</p>
+            <p>
+              <strong>Scholar ID:</strong> {studentData["Scholar ID"]}
+            </p>
+            <p>
+              <strong>Section:</strong> {studentData["Section"]}
+            </p>
+            <p>
+              <strong>Course:</strong> {studentData["Course"]}
+            </p>
           </div>
 
           {/* FAMILY PHOTOS */}
@@ -122,7 +166,9 @@ function App() {
             <div className="photos-grid">
               {imageMap.map((item) => {
                 const url = studentData[item.imgField];
-                const personName = item.nameField ? studentData[item.nameField] : null;
+                const personName = item.nameField
+                  ? studentData[item.nameField]
+                  : null;
                 if (!url && !personName) return null;
                 return (
                   <div className="photo-card" key={item.label}>
@@ -131,13 +177,15 @@ function App() {
                         src={url}
                         alt={item.label}
                         className="photo"
-                        onMouseEnter={() => setActiveImage(url)}
+                        onClick={() => setActiveImage(url)}
                       />
                     ) : (
                       <div className="photo placeholder">No Image</div>
                     )}
                     <div className="photo-label">{item.label}</div>
-                    {personName && <div className="photo-name">{personName}</div>}
+                    {personName && (
+                      <div className="photo-name">{personName}</div>
+                    )}
                   </div>
                 );
               })}
@@ -148,9 +196,17 @@ function App() {
 
       {/* POPUP */}
       {activeImage && (
-        <div className="popup-overlay" onClick={(e) => e.target.classList.contains("popup-overlay") && setActiveImage(null)}>
+        <div
+          className="popup-overlay"
+          onClick={(e) =>
+            e.target.classList.contains("popup-overlay") &&
+            setActiveImage(null)
+          }
+        >
           <div className="popup-content">
-            <button className="close-btn" onClick={() => setActiveImage(null)}>✕</button>
+            <button className="close-btn" onClick={() => setActiveImage(null)}>
+              ✕
+            </button>
             <img src={activeImage} alt="enlarged" className="popup-image" />
           </div>
         </div>

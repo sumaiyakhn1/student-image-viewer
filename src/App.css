@@ -78,55 +78,74 @@ body {
   background: var(--light-orange);
 }
 
-/* LAYOUT */
+/* =====================
+   MAIN LAYOUT SECTION
+===================== */
 .main-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 350px 1fr;
   gap: 2rem;
   max-width: 1300px;
   margin: auto;
   align-items: flex-start;
+  padding: 1rem;
 }
 
-/* STUDENT CARD */
+/* STUDENT CARD (Left) */
 .student-card {
-  flex: 0 1 320px;
   background: var(--card-bg);
   padding: 2rem 1.5rem;
   border-radius: 20px;
   box-shadow: var(--shadow);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .student-photo {
-  width: 180px;
-  height: 180px;
+  width: 220px;
+  height: 220px;
   object-fit: cover;
   border-radius: 16px;
-  margin-bottom: 1rem;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  cursor: zoom-in;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .student-photo:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
 }
 
-/* PHOTOS SECTION */
+.student-card h2 {
+  font-size: 1.4rem;
+  margin: 0.5rem 0;
+}
+
+.student-card p {
+  margin: 0.3rem 0;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+/* PHOTOS SECTION (Right) */
 .photos-container {
-  flex: 1;
   background: var(--card-bg);
   padding: 2rem;
   border-radius: 20px;
   box-shadow: var(--shadow);
+  width: 100%;
 }
 
 .photos-container h3 {
   margin-bottom: 1.5rem;
   font-weight: 600;
+  text-align: center;
 }
 
+/* GRID: 3 cards per row */
 .photos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -139,6 +158,16 @@ body {
   border-radius: 16px;
   text-align: center;
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.photo-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .photo {
@@ -147,18 +176,12 @@ body {
   object-fit: cover;
   border-radius: 12px;
   margin-bottom: 0.6rem;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  cursor: zoom-in;
-}
-
-.photo:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .photo-label {
   color: var(--orange);
   font-weight: 600;
+  margin-top: 0.5rem;
 }
 
 .photo-name {
@@ -166,7 +189,9 @@ body {
   font-size: 0.9rem;
 }
 
-/* POPUP */
+/* =====================
+        POPUP
+===================== */
 .popup-overlay {
   position: fixed;
   inset: 0;
@@ -176,13 +201,11 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  animation: fadeIn 0.2s ease forwards;
+  animation: fadeIn 0.3s ease forwards;
 }
 
 .popup-content {
   position: relative;
-  max-width: 55vw;       /* slightly smaller width */
-  max-height: 75vh;      /* reduce height to fit viewport */
   animation: zoomIn 0.25s ease forwards;
   display: flex;
   align-items: center;
@@ -190,20 +213,22 @@ body {
 }
 
 .popup-image {
-  width: auto;
-  height: auto;
-  max-width: 80%;
-  max-height: 80%;
+  max-width: 85vw;
+  max-height: 85vh;
   object-fit: contain;
   border-radius: 12px;
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+  transition: transform 0.25s ease;
 }
 
+.popup-image:hover {
+  transform: scale(1.02);
+}
 
 .close-btn {
   position: absolute;
-  top: -40px;
-  right: -40px;
+  top: -45px;
+  right: -45px;
   background: #fff;
   color: #333;
   border: none;
@@ -214,24 +239,37 @@ body {
   height: 40px;
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .close-btn:hover {
   background: #ffdddd;
+  transform: rotate(90deg);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes zoomIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-/* LOADER */
+/* =====================
+        LOADER
+===================== */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -258,14 +296,47 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-/* FOOTER */
+/* =====================
+        FOOTER
+===================== */
 .footer {
   text-align: center;
   color: #777;
   margin-top: 2rem;
   padding: 1rem;
+}
+
+/* =====================
+      RESPONSIVE
+===================== */
+@media (max-width: 992px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  .student-card {
+    width: 100%;
+  }
+  .photos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .search-area {
+    flex-direction: column;
+  }
+  .search-btn {
+    width: 100%;
+  }
+  .photos-grid {
+    grid-template-columns: 1fr;
+  }
 }
