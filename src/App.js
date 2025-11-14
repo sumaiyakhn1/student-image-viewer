@@ -40,7 +40,7 @@ function App() {
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
 
-  // Animated loader text
+  // Animated loading text
   useEffect(() => {
     if (loading) {
       const messages = [
@@ -50,19 +50,16 @@ function App() {
         "Almost done...",
       ];
       let index = 0;
-      const el = document.getElementById("loading-text");
-      if (el) el.textContent = messages[index];
-
+      const textElement = document.getElementById("loading-text");
+      if (textElement) textElement.textContent = messages[index];
       const interval = setInterval(() => {
         index = (index + 1) % messages.length;
-        if (el) el.textContent = messages[index];
+        if (textElement) textElement.textContent = messages[index];
       }, 1500);
-
       return () => clearInterval(interval);
     }
   }, [loading]);
 
-  // Mapping for all images
   const imageMap = [
     { label: "Father", imgField: "Father's Photograph", nameField: "Father Name" },
     { label: "Mother", imgField: "Mother's Photograph", nameField: "Mother Name" },
@@ -76,7 +73,6 @@ function App() {
 
   return (
     <div className="app">
-
       {/* HEADER */}
       <header className="header">
         <div className="header-content">
@@ -92,7 +88,7 @@ function App() {
         </div>
       </header>
 
-      {/* SEARCH */}
+      {/* SEARCH + REFRESH BUTTON */}
       <section className="search-area">
         <input
           className="search-input"
@@ -101,13 +97,12 @@ function App() {
           onChange={(e) => setScholarId(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && fetchStudent()}
         />
+
         <button className="search-btn" onClick={fetchStudent} disabled={loading}>
           {loading ? "Searching..." : "Search"}
         </button>
-      </section>
 
-      {/* MANUAL REFRESH BUTTON */}
-      <div className="refresh-wrapper">
+        {/* REFRESH BUTTON (styled equally, same row) */}
         <button
           className="refresh-btn"
           onClick={async () => {
@@ -119,9 +114,9 @@ function App() {
             }
           }}
         >
-          Refresh Sheet
+          Refresh
         </button>
-      </div>
+      </section>
 
       {/* LOADER */}
       {loading && (
@@ -134,7 +129,7 @@ function App() {
       {/* ERROR */}
       {error && <div className="msg error">{error}</div>}
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       {studentData && !loading && (
         <div className="main-layout">
           {/* STUDENT CARD */}
@@ -157,11 +152,11 @@ function App() {
             <div className="photos-grid">
               {imageMap.map((item) => {
                 const url = studentData[item.imgField];
-                const personName = item.nameField ? studentData[item.nameField] : null;
+                const personName = studentData[item.nameField];
                 if (!url && !personName) return null;
 
                 return (
-                  <div className={`photo-card ${item.label.includes("Aadhar") ? "aadhar" : ""}`} key={item.label}>
+                  <div className="photo-card" key={item.label}>
                     {url ? (
                       <img
                         src={url}
@@ -182,7 +177,7 @@ function App() {
         </div>
       )}
 
-      {/* POPUP IMAGE VIEW */}
+      {/* POPUP */}
       {activeImage && (
         <div
           className="popup-overlay"
