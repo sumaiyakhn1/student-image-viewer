@@ -40,7 +40,7 @@ function App() {
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
 
-  // Animated loading text
+  // Animated loader text
   useEffect(() => {
     if (loading) {
       const messages = [
@@ -50,64 +50,33 @@ function App() {
         "Almost done...",
       ];
       let index = 0;
-      const textElement = document.getElementById("loading-text");
-      if (textElement) textElement.textContent = messages[index];
+      const el = document.getElementById("loading-text");
+      if (el) el.textContent = messages[index];
+
       const interval = setInterval(() => {
         index = (index + 1) % messages.length;
-        if (textElement) textElement.textContent = messages[index];
+        if (el) el.textContent = messages[index];
       }, 1500);
+
       return () => clearInterval(interval);
     }
   }, [loading]);
 
-  // ========================
-  // IMAGE MAPPING (with Aadhar)
-  // ========================
+  // Mapping for all images
   const imageMap = [
-    {
-      label: "Father",
-      imgField: "Father's Photograph",
-      nameField: "Father Name",
-    },
-    {
-      label: "Mother",
-      imgField: "Mother's Photograph",
-      nameField: "Mother Name",
-    },
-    {
-      label: "Grandfather",
-      imgField: "Grandfather's Photograph",
-      nameField: "Grandfather's Name",
-    },
-    {
-      label: "Grandmother",
-      imgField: "Grandmother's Photograph",
-      nameField: "Grandmother's Name",
-    },
-    {
-      label: "Sibling 1",
-      imgField: "Sibling-1 Photograph (Real brother/sister)",
-      nameField: "Sibling-1 Name",
-    },
-    {
-      label: "Sibling 1 — Aadhar Card",
-      imgField: "Aadhar Card Of Sibling 1",
-      nameField: "Sibling-1 Name",
-    },
-    {
-      label: "Sibling 2",
-      imgField: "Sibling-2 Photograph (Real brother/sister)",
-      nameField: "Sibling-2 Name",
-    },
-    {
-      label: "Sibling 2 — Aadhar Card",
-      imgField: "Aadhar Card Of Sibling 2",
-      nameField: "Sibling-2 Name",
-    },
+    { label: "Father", imgField: "Father's Photograph", nameField: "Father Name" },
+    { label: "Mother", imgField: "Mother's Photograph", nameField: "Mother Name" },
+    { label: "Grandfather", imgField: "Grandfather's Photograph", nameField: "Grandfather's Name" },
+    { label: "Grandmother", imgField: "Grandmother's Photograph", nameField: "Grandmother's Name" },
+    { label: "Sibling 1", imgField: "Sibling-1 Photograph (Real brother/sister)", nameField: "Sibling-1 Name" },
+    { label: "Sibling 1 — Aadhar Card", imgField: "Aadhar Card Of Sibling 1", nameField: "Sibling-1 Name" },
+    { label: "Sibling 2", imgField: "Sibling-2 Photograph (Real brother/sister)", nameField: "Sibling-2 Name" },
+    { label: "Sibling 2 — Aadhar Card", imgField: "Aadhar Card Of Sibling 2", nameField: "Sibling-2 Name" },
   ];
 
   return (
     <div className="app">
+
       {/* HEADER */}
       <header className="header">
         <div className="header-content">
@@ -137,6 +106,23 @@ function App() {
         </button>
       </section>
 
+      {/* MANUAL REFRESH BUTTON */}
+      <div className="refresh-wrapper">
+        <button
+          className="refresh-btn"
+          onClick={async () => {
+            try {
+              await axios.get(`${BACKEND_URL}/refresh-sheet`);
+              alert("Sheet refreshed successfully!");
+            } catch (err) {
+              alert("Failed to refresh sheet!");
+            }
+          }}
+        >
+          Refresh Sheet
+        </button>
+      </div>
+
       {/* LOADER */}
       {loading && (
         <div className="loading-container">
@@ -148,7 +134,7 @@ function App() {
       {/* ERROR */}
       {error && <div className="msg error">{error}</div>}
 
-      {/* MAIN */}
+      {/* MAIN CONTENT */}
       {studentData && !loading && (
         <div className="main-layout">
           {/* STUDENT CARD */}
@@ -157,20 +143,12 @@ function App() {
               src={studentData["Student's Photograph"]}
               alt="Student"
               className="student-photo"
-              onClick={() =>
-                setActiveImage(studentData["Student's Photograph"])
-              }
+              onClick={() => setActiveImage(studentData["Student's Photograph"])}
             />
             <h2>{studentData["Student Name"]}</h2>
-            <p>
-              <strong>Scholar ID:</strong> {studentData["Scholar ID"]}
-            </p>
-            <p>
-              <strong>Section:</strong> {studentData["Section"]}
-            </p>
-            <p>
-              <strong>Course:</strong> {studentData["Course"]}
-            </p>
+            <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
+            <p><strong>Section:</strong> {studentData["Section"]}</p>
+            <p><strong>Course:</strong> {studentData["Course"]}</p>
           </div>
 
           {/* FAMILY PHOTOS */}
@@ -179,17 +157,11 @@ function App() {
             <div className="photos-grid">
               {imageMap.map((item) => {
                 const url = studentData[item.imgField];
-                const personName = item.nameField
-                  ? studentData[item.nameField]
-                  : null;
+                const personName = item.nameField ? studentData[item.nameField] : null;
                 if (!url && !personName) return null;
+
                 return (
-                  <div
-                    className={`photo-card ${
-                      item.label.includes("Aadhar") ? "aadhar" : ""
-                    }`}
-                    key={item.label}
-                  >
+                  <div className={`photo-card ${item.label.includes("Aadhar") ? "aadhar" : ""}`} key={item.label}>
                     {url ? (
                       <img
                         src={url}
@@ -201,9 +173,7 @@ function App() {
                       <div className="photo placeholder">No Image</div>
                     )}
                     <div className="photo-label">{item.label}</div>
-                    {personName && (
-                      <div className="photo-name">{personName}</div>
-                    )}
+                    {personName && <div className="photo-name">{personName}</div>}
                   </div>
                 );
               })}
@@ -212,13 +182,12 @@ function App() {
         </div>
       )}
 
-      {/* POPUP */}
+      {/* POPUP IMAGE VIEW */}
       {activeImage && (
         <div
           className="popup-overlay"
           onClick={(e) =>
-            e.target.classList.contains("popup-overlay") &&
-            setActiveImage(null)
+            e.target.classList.contains("popup-overlay") && setActiveImage(null)
           }
         >
           <div className="popup-content">
