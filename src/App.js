@@ -78,6 +78,7 @@ function App() {
 
   return (
     <div className="app">
+
       {/* HEADER */}
       <header className="header">
         <div className="header-content">
@@ -93,7 +94,7 @@ function App() {
         </div>
       </header>
 
-      {/* SEARCH + REFRESH */}
+      {/* SEARCH AREA */}
       <section className="search-area">
         <input
           className="search-input"
@@ -107,6 +108,7 @@ function App() {
           {loading ? "Searching..." : "Search"}
         </button>
 
+        {/* REFRESH BUTTON */}
         <button
           className="refresh-btn"
           onClick={async () => {
@@ -122,10 +124,10 @@ function App() {
         </button>
       </section>
 
-      {/* ERROR (centered) */}
+      {/* ERROR (CENTERED) */}
       {error && <div className="msg error">{error}</div>}
 
-      {/* LOADER */}
+      {/* LOADER CENTERED */}
       {loading && (
         <div className="loading-container">
           <div className="spinner"></div>
@@ -133,9 +135,10 @@ function App() {
         </div>
       )}
 
-      {/* MAIN INFO */}
+      {/* MAIN CONTENT */}
       {studentData && !loading && (
         <div className="main-layout">
+
           {/* STUDENT CARD */}
           <div className="student-card">
             <img
@@ -144,6 +147,7 @@ function App() {
               className="student-photo"
               onClick={() => setActiveImage(studentData["Student's Photograph"])}
             />
+
             <h2>{studentData["Student Name"]}</h2>
             <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
             <p><strong>Section:</strong> {studentData["Section"]}</p>
@@ -180,6 +184,7 @@ function App() {
               })}
             </div>
           </div>
+
         </div>
       )}
 
@@ -188,7 +193,8 @@ function App() {
         <div
           className="popup-overlay"
           onClick={(e) =>
-            e.target.classList.contains("popup-overlay") && setActiveImage(null)
+            e.target.classList.contains("popup-overlay") &&
+            setActiveImage(null)
           }
         >
           <div className="popup-content">
@@ -200,7 +206,9 @@ function App() {
         </div>
       )}
 
-      <footer className="footer">Okie Dokie • Student Image Finder</footer>
+      <footer className="footer">
+        Okie Dokie • Student Image Finder
+      </footer>
     </div>
   );
 }
