@@ -90,7 +90,7 @@ function App() {
             />
             <h1 className="brand-title">Okie Dokie — Student Info</h1>
           </div>
-          <div className="created-by">Created by Okie Dokie</div>
+          {/* <div className="created-by">Created by Okie Dokie</div> */}
         </div>
       </header>
 
@@ -207,7 +207,7 @@ function App() {
       )}
 
       <footer className="footer">
-        Okie Dokie • Student Image Finder
+        crafted with 💖 by Okie Dokie
       </footer>
     </div>
   );
