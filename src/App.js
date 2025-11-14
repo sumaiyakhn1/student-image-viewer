@@ -12,7 +12,11 @@ function App() {
   const BACKEND_URL = "https://student-image-finder.onrender.com";
 
   const fetchStudent = async () => {
-    if (!scholarId.trim()) return setError("Please enter a Scholar ID or Name");
+    if (!scholarId.trim()) {
+      setError("Please enter a Scholar ID or Name");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setStudentData(null);
@@ -23,9 +27,7 @@ function App() {
       );
       setStudentData(res.data);
     } catch (err) {
-      setError(
-        err.response?.data?.detail || "Student not found or server error"
-      );
+      setError(err.response?.data?.detail || "Student not found or server error");
     } finally {
       setLoading(false);
     }
@@ -50,12 +52,15 @@ function App() {
         "Almost done...",
       ];
       let index = 0;
-      const textElement = document.getElementById("loading-text");
-      if (textElement) textElement.textContent = messages[index];
+
+      const el = document.getElementById("loading-text");
+      if (el) el.textContent = messages[index];
+
       const interval = setInterval(() => {
         index = (index + 1) % messages.length;
-        if (textElement) textElement.textContent = messages[index];
+        if (el) el.textContent = messages[index];
       }, 1500);
+
       return () => clearInterval(interval);
     }
   }, [loading]);
@@ -66,9 +71,9 @@ function App() {
     { label: "Grandfather", imgField: "Grandfather's Photograph", nameField: "Grandfather's Name" },
     { label: "Grandmother", imgField: "Grandmother's Photograph", nameField: "Grandmother's Name" },
     { label: "Sibling 1", imgField: "Sibling-1 Photograph (Real brother/sister)", nameField: "Sibling-1 Name" },
-    { label: "Sibling 1 — Aadhar Card", imgField: "Aadhar Card Of Sibling 1", nameField: "Sibling-1 Name" },
+    { label: "Sibling 1 — Aadhar", imgField: "Aadhar Card Of Sibling 1", nameField: "Sibling-1 Name" },
     { label: "Sibling 2", imgField: "Sibling-2 Photograph (Real brother/sister)", nameField: "Sibling-2 Name" },
-    { label: "Sibling 2 — Aadhar Card", imgField: "Aadhar Card Of Sibling 2", nameField: "Sibling-2 Name" },
+    { label: "Sibling 2 — Aadhar", imgField: "Aadhar Card Of Sibling 2", nameField: "Sibling-2 Name" },
   ];
 
   return (
@@ -88,7 +93,7 @@ function App() {
         </div>
       </header>
 
-      {/* SEARCH + REFRESH BUTTON */}
+      {/* SEARCH + REFRESH */}
       <section className="search-area">
         <input
           className="search-input"
@@ -102,7 +107,6 @@ function App() {
           {loading ? "Searching..." : "Search"}
         </button>
 
-        {/* REFRESH BUTTON (styled equally, same row) */}
         <button
           className="refresh-btn"
           onClick={async () => {
@@ -118,6 +122,9 @@ function App() {
         </button>
       </section>
 
+      {/* ERROR (centered) */}
+      {error && <div className="msg error">{error}</div>}
+
       {/* LOADER */}
       {loading && (
         <div className="loading-container">
@@ -126,10 +133,7 @@ function App() {
         </div>
       )}
 
-      {/* ERROR */}
-      {error && <div className="msg error">{error}</div>}
-
-      {/* MAIN */}
+      {/* MAIN INFO */}
       {studentData && !loading && (
         <div className="main-layout">
           {/* STUDENT CARD */}
@@ -153,6 +157,7 @@ function App() {
               {imageMap.map((item) => {
                 const url = studentData[item.imgField];
                 const personName = studentData[item.nameField];
+
                 if (!url && !personName) return null;
 
                 return (
@@ -167,6 +172,7 @@ function App() {
                     ) : (
                       <div className="photo placeholder">No Image</div>
                     )}
+
                     <div className="photo-label">{item.label}</div>
                     {personName && <div className="photo-name">{personName}</div>}
                   </div>
