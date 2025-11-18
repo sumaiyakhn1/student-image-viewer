@@ -18,8 +18,11 @@ body {
   width: 100%;
   background: linear-gradient(90deg, var(--orange), #ffac33);
   color: #fff;
-  padding: 1rem 2rem;
+  padding: 0 2rem;
+  height: 80px;   /* adjust if needed */
   box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;   
 }
 
 .header-content {
