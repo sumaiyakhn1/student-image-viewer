@@ -93,7 +93,7 @@ function App() {
       {/* ---------------- NO STUDENT SELECTED PANEL ---------------- */}
       {!studentData && !loading && !error && (
         <div className="glass-card empty-box">
-          No student selected — try searching by Scholar ID, name or mobile.
+          No student selected — try searching by Scholar ID.
         </div>
       )}
 
