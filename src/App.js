@@ -71,7 +71,7 @@ function App() {
 
         <div className="search-input-wrapper">
           <input
-            placeholder="Search by Scholar ID, name or mobile — e.g. 2172 or Aarav"
+            placeholder="Search by Scholar ID, name or mobile — e.g. 2074 or Priyal"
             value={scholarId}
             onChange={(e) => setScholarId(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && fetchStudent()}
