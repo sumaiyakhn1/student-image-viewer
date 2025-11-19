@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
+import { FiRefreshCw, FiSearch } from "react-icons/fi";
 
 function App() {
   const [scholarId, setScholarId] = useState("");
@@ -33,7 +34,16 @@ function App() {
     }
   };
 
-  // Close popup on ESC key
+  const refreshSheet = async () => {
+    try {
+      await axios.get(`${BACKEND_URL}/refresh-sheet`);
+      alert("Sheet refreshed successfully!");
+    } catch (err) {
+      alert("Failed to refresh sheet!");
+    }
+  };
+
+  // ESC closes popup
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") setActiveImage(null);
@@ -41,29 +51,6 @@ function App() {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
-
-  // Animated loading text
-  useEffect(() => {
-    if (loading) {
-      const messages = [
-        "Fetching student details...",
-        "Verifying scholar ID...",
-        "Checking image links...",
-        "Almost done...",
-      ];
-      let index = 0;
-
-      const el = document.getElementById("loading-text");
-      if (el) el.textContent = messages[index];
-
-      const interval = setInterval(() => {
-        index = (index + 1) % messages.length;
-        if (el) el.textContent = messages[index];
-      }, 1500);
-
-      return () => clearInterval(interval);
-    }
-  }, [loading]);
 
   const imageMap = [
     { label: "Father", imgField: "Father's Photograph", nameField: "Father Name" },
@@ -77,108 +64,93 @@ function App() {
   ];
 
   return (
-    <div className="app">
+    <div className="app-screen">
 
-      {/* HEADER */}
-      <header className="header">
-        <div className="header-content">
-          <div className="brand">
-            <img
-              src="https://okiedokie-erp-images.s3.ap-south-1.amazonaws.com/Okie%20Dokie/2025/02/sourceURL/611ed1b9032568edd4f3-Okie%20Dokie%20App%20icon%20%282%29.png"
-              alt="Okie Dokie Logo"
-              className="brand-logo"
-            />
-            <h1 className="brand-title">Okie Dokie — Student Info</h1>
-          </div>
-          {/* <div className="created-by">Created by Okie Dokie</div> */}
+      {/* ---------------- SEARCH BOX GLASS UI ---------------- */}
+      <div className="glass-card search-card">
+
+        <div className="search-input-wrapper">
+          <input
+            placeholder="Search by Scholar ID, name or mobile — e.g. 2172 or Aarav"
+            value={scholarId}
+            onChange={(e) => setScholarId(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && fetchStudent()}
+            className="search-input"
+          />
+          <FiSearch className="search-icon" />
         </div>
-      </header>
 
-      {/* SEARCH AREA */}
-      <section className="search-area">
-        <input
-          className="search-input"
-          placeholder="Enter Scholar ID (e.g. 2172)"
-          value={scholarId}
-          onChange={(e) => setScholarId(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && fetchStudent()}
-        />
-
-        <button className="search-btn" onClick={fetchStudent} disabled={loading}>
-          {loading ? "Searching..." : "Search"}
+        <button className="btn-search" onClick={fetchStudent}>
+          Search
         </button>
 
-        {/* REFRESH BUTTON */}
-        <button
-          className="refresh-btn"
-          onClick={async () => {
-            try {
-              await axios.get(`${BACKEND_URL}/refresh-sheet`);
-              alert("Sheet refreshed successfully!");
-            } catch (err) {
-              alert("Failed to refresh sheet!");
-            }
-          }}
-        >
+        <button className="btn-refresh" onClick={refreshSheet}>
+          <FiRefreshCw size={16} />
           Refresh
         </button>
-      </section>
+      </div>
 
-      {/* ERROR (CENTERED) */}
-      {error && <div className="msg error">{error}</div>}
-
-      {/* LOADER CENTERED */}
-      {loading && (
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p className="loading-text" id="loading-text"></p>
+      {/* ---------------- NO STUDENT SELECTED PANEL ---------------- */}
+      {!studentData && !loading && !error && (
+        <div className="glass-card empty-box">
+          No student selected — try searching by Scholar ID, name or mobile.
         </div>
       )}
 
-      {/* MAIN CONTENT */}
+      {/* ---------------- ERROR MESSAGE ---------------- */}
+      {error && <div className="error-msg">{error}</div>}
+
+      {/* ---------------- LOADING ---------------- */}
+      {loading && (
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p className="loading-text">Fetching student details…</p>
+        </div>
+      )}
+
+      {/* ---------------- STUDENT DATA ---------------- */}
       {studentData && !loading && (
         <div className="main-layout">
 
-          {/* STUDENT CARD */}
-          <div className="student-card">
+          {/* STUDENT INFO CARD */}
+          <div className="glass-card student-card">
             <img
               src={studentData["Student's Photograph"]}
-              alt="Student"
               className="student-photo"
+              alt="Student"
               onClick={() => setActiveImage(studentData["Student's Photograph"])}
             />
-
             <h2>{studentData["Student Name"]}</h2>
-            <p><strong>Scholar ID:</strong> {studentData["Scholar ID"]}</p>
+            <p><strong>ID:</strong> {studentData["Scholar ID"]}</p>
             <p><strong>Section:</strong> {studentData["Section"]}</p>
             <p><strong>Course:</strong> {studentData["Course"]}</p>
           </div>
 
           {/* FAMILY PHOTOS */}
-          <div className="photos-container">
+          <div className="glass-card photos-card">
             <h3>Photos & Documents</h3>
+
             <div className="photos-grid">
               {imageMap.map((item) => {
                 const url = studentData[item.imgField];
-                const personName = studentData[item.nameField];
+                const name = studentData[item.nameField];
 
-                if (!url && !personName) return null;
+                if (!url && !name) return null;
 
                 return (
-                  <div className="photo-card" key={item.label}>
+                  <div key={item.label} className="photo-card">
                     {url ? (
                       <img
                         src={url}
-                        alt={item.label}
                         className="photo"
                         onClick={() => setActiveImage(url)}
+                        alt={item.label}
                       />
                     ) : (
                       <div className="photo placeholder">No Image</div>
                     )}
-
                     <div className="photo-label">{item.label}</div>
-                    {personName && <div className="photo-name">{personName}</div>}
+                    {name && <div className="photo-name">{name}</div>}
                   </div>
                 );
               })}
@@ -188,7 +160,7 @@ function App() {
         </div>
       )}
 
-      {/* POPUP */}
+      {/* ---------------- IMAGE POPUP ---------------- */}
       {activeImage && (
         <div
           className="popup-overlay"
@@ -201,7 +173,7 @@ function App() {
             <button className="close-btn" onClick={() => setActiveImage(null)}>
               ✕
             </button>
-            <img src={activeImage} alt="enlarged" className="popup-image" />
+            <img src={activeImage} className="popup-image" alt="preview" />
           </div>
         </div>
       )}
