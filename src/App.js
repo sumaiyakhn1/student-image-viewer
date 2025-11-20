@@ -121,7 +121,7 @@ function App() {
         <img src="/logo.png" alt="Logo" />
         <div>
           <h1>Okie Dokie</h1>
-          <div className="subtitle">Student Search – Kids Friendly</div>
+          <div className="subtitle">Student Search</div>
         </div>
       </div>
 
